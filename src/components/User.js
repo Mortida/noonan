@@ -6,7 +6,7 @@ export const User = [
   },
   {
     id: 2,
-    name: 'عبدالناصر محمد',
+    name: 'والي الدين',
     email: 'Shanna@melissa.tv'
   },
   {

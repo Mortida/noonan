@@ -2,54 +2,55 @@ import React from 'react';
 import './App.css';
 import {connect} from 'react-redux';
 import CardList from '../components/CardList'
-import { User } from '../components/User'
 import Search from '../components/Search';
 import Scroll from '../components/Scroll';
 
-import {stSearchField} from '../action';
+import {stSearchField, gitUsers} from '../action';
 
 const mapStateToProps = (state) => {
   return {
-    searchField: state.searchField
+    searchField: state.searchUser.searchField,
+    user: state.requestUser.user,
+    isPending: state.requestUser.isPending,
+    error: state.requestUser.error
   }
 }
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    onSearchChange: (e) => dispatch(stSearchField(e.target.value))
+    onSearchChange: (e) => dispatch(stSearchField(e.target.value)),
+    onRequestUser: () => dispatch(gitUsers)
   }
 }
 
 class App extends React.Component {
-  constructor(){
-    super()
-    this.state = {
-      user: [],
-    }
-  }
 
   componentDidMount(){
-    this.setState({user: User})
+    this.props.onRequestUser()
   }
 
   render(){
-    const { user } = this.state;
-    const { searchField, onSearchChange } = this.props;
+    const { searchField, onSearchChange, user, isPending } = this.props;
     const filteredUser = user.filter(users => {
       return users.name.toLowerCase().includes(searchField.toLowerCase())
     })
   
     const arr = Object.entries(filteredUser);
-
-    return(
-    <div className='tc'>
-      <h1> My Memories 's My Priorities</h1>
-      <Search searchChange={onSearchChange}/>
-      <Scroll>
-        <CardList user={ filteredUser } result={arr.length}/>
-      </Scroll>
-    </div>
-  )
+    const loading = document.querySelector('root')
+    
+      if(isPending){
+          return loading.style.display = 'none';
+      }else{
+        
+        return <div className='tc'>
+            <h1> My Memories 's My Priorities</h1>
+            <Search searchChange={onSearchChange}/>
+            <Scroll>
+              <CardList user={ filteredUser } result={arr.length}/>
+            </Scroll>
+          </div>
+        
+      }
   }
   
 }
